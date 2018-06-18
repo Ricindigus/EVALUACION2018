@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "698190685287",
+    "firebase_url": "https://controlasistencia-e28a1.firebaseio.com",
+    "project_id": "controlasistencia-e28a1",
+    "storage_bucket": "controlasistencia-e28a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698190685287:android:067422c54b3d5378",
+        "android_client_info": {
+          "package_name": "com.example.dmorales.evaluacion2018"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698190685287-m3qhejqqijk3s0i9e4284rrc1e3uku9b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dmorales.evaluacion2018",
+            "certificate_hash": "9df97ac86063d6ce6c2c2c8f8a94aa12656ec39e"
+          }
+        },
+        {
+          "client_id": "698190685287-jl799ml82p7mi1be5nf2d48a8f90hkbp.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "698190685287-jl799ml82p7mi1be5nf2d48a8f90hkbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH333Yab3CqK2W6oGngu_d467eRS2VA04"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698190685287-jl799ml82p7mi1be5nf2d48a8f90hkbp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

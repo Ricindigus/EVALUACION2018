@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item
+        android:id="@+id/menu_registro"
+        android:icon="@drawable/ic_account_box"
+        android:title="Registro de Asistencia" />
+    <item
+        android:id="@+id/menu_listado"
+        android:icon="@drawable/ic_library_books"
+        android:title="Listado de Asistencia Local" />
+    <item
+        android:id="@+id/menu_reset_bd"
+        android:icon="@drawable/ic_autorenew"
+        android:title="Reset BD" />
+    <item
+        android:id="@+id/menu_cerrar_sesion"
+        android:icon="@drawable/ic_power_settings_new"
+        android:title="Cerrar Sesión" />
+</menu>
