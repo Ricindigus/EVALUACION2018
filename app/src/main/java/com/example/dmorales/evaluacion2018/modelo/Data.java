@@ -222,6 +222,34 @@ public class Data {
         return registrados;
     }
 
+    public ArrayList<Registrado> getAllRegistradosNube(){
+        ArrayList<Registrado> registrados = new ArrayList<>();
+        String[] whereArgs = new String[]{"1"};
+        Cursor cursor = null;
+        try{
+            cursor = sqLiteDatabase.query(SQLConstantes.tablafecharegistro,
+                    null,SQLConstantes.WHERE_CLAUSE_SUBIDO,whereArgs,null,null,null);
+            while(cursor.moveToNext()){
+                Registrado registrado = new Registrado();
+                registrado.set_id(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_id)));
+                registrado.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_codigo)));
+                registrado.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_nombres)));
+                registrado.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_sede)));
+                registrado.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_aula)));
+                registrado.setDia(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_dia)));
+                registrado.setMes(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_mes)));
+                registrado.setAnio(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_anio)));
+                registrado.setHora(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_hora)));
+                registrado.setMinuto(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_minuto)));
+                registrado.setSubido(cursor.getInt(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_subido)));
+                registrados.add(registrado);
+            }
+        }finally{
+            if(cursor != null) cursor.close();
+        }
+        return registrados;
+    }
+
     public void deleteAllElementosFromTabla(String nombreTabla){
         sqLiteDatabase.execSQL("delete from "+ nombreTabla);
     }

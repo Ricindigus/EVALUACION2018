@@ -4,17 +4,20 @@ package com.example.dmorales.evaluacion2018.fragments;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dmorales.evaluacion2018.R;
@@ -42,6 +45,8 @@ public class ListadoFragment extends Fragment {
     String sede;
     Data data;
     FloatingActionButton fabUpLoad;
+    TextView txtNumero;
+    boolean b = false;
 
     public ListadoFragment() {
         // Required empty public constructor
@@ -62,6 +67,7 @@ public class ListadoFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_listado, container, false);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.listado_recycler);
         fabUpLoad = (FloatingActionButton) rootView.findViewById(R.id.listado_btnUpload);
+        txtNumero = (TextView) rootView.findViewById(R.id.listado_txtNumero);
         return rootView;
     }
 
@@ -71,13 +77,14 @@ public class ListadoFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         cargaData();
-        RegistradoAdapter registradoAdapter = new RegistradoAdapter(registrados,context);
+        final RegistradoAdapter registradoAdapter = new RegistradoAdapter(registrados,context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(registradoAdapter);
 
         fabUpLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                b = false;
                 agregados = new ArrayList<>();
                 try {
                     data = new Data(context);
@@ -92,17 +99,24 @@ public class ListadoFragment extends Fragment {
                     for (final Registrado registrado : agregados){
                         registrado.setSubido(1);
                         final String c = registrado.getCodigo();
+                        Toast.makeText(context, "Subiendo...", Toast.LENGTH_SHORT).show();
                         db.collection("asistencias").document(registrado.getCodigo()).set(registrado)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
+                                        if(!b){
+                                            Toast.makeText(context, agregados.size() +" registros subidos", Toast.LENGTH_SHORT).show();
+                                            b =true;
+                                        }
                                         try {
                                             data = new Data(context);
                                             data.open();
                                             ContentValues contentValues = new ContentValues();
                                             contentValues.put(SQLConstantes.fecha_de_registro_subido,1);
                                             data.actualizarFechaRegistro(c,contentValues);
+                                            cargaData();
+                                            registradoAdapter.notifyDataSetChanged();
                                             data.close();
                                         } catch (IOException e) {
                                             e.printStackTrace();
@@ -130,9 +144,22 @@ public class ListadoFragment extends Fragment {
             Data data = new Data(context);
             data.open();
             registrados = data.getAllRegistrados(sede);
+            txtNumero.setText("Total registros: " + registrados.size());
             data.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void mostrarMensaje(String m){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(m);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

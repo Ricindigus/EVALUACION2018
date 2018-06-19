@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.dmorales.evaluacion2018.R;
 import com.example.dmorales.evaluacion2018.fragments.ListadoFragment;
+import com.example.dmorales.evaluacion2018.fragments.NubeFragment;
 import com.example.dmorales.evaluacion2018.fragments.RegistroFragment;
 import com.example.dmorales.evaluacion2018.modelo.Data;
 import com.example.dmorales.evaluacion2018.modelo.SQLConstantes;
@@ -105,6 +106,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_listado) {
             ListadoFragment listadoFragment = new ListadoFragment(sede,MainActivity.this);
             fragmentTransaction.replace(R.id.fragment_layout, listadoFragment);
+            fragmentTransaction.commit();
+        } else if (id == R.id.menu_nube) {
+            NubeFragment nubeFragment = new NubeFragment(sede,MainActivity.this);
+            fragmentTransaction.replace(R.id.fragment_layout, nubeFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.menu_reset_bd) {

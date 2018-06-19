@@ -130,6 +130,7 @@ public class RegistroFragment extends Fragment {
                         cvNoregistrado.setVisibility(View.VISIBLE);
                     }
                 }
+                edtDni.setText("");
             }
         });
     }

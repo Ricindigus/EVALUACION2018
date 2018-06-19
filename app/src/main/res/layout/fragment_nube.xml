@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ListadoFragment">
+    tools:context=".fragments.NubeFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,16 +12,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DATOS LOCALES"
+            android:text="DATOS ENVIADOS"
             android:layout_marginTop="@dimen/margin5dp"
             android:textSize="20sp"
             android:gravity="center"
             android:textColor="@color/colorAccent"/>
         <TextView
-            android:id="@+id/listado_txtNumero"
+            android:id="@+id/nube_txtNumero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Total registros:"
+            android:text="Total enviados:"
             android:gravity="center"
             android:layout_marginBottom="@dimen/margin5dp"
             android:textColor="@color/colorAccent"/>
@@ -77,20 +77,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/listado_recycler"
+                android:id="@+id/nube_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"/>
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/listado_btnUpload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_file_upload"
-                android:tint="@color/colorIcons"
-                />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

@@ -1,6 +1,8 @@
 package com.example.dmorales.evaluacion2018.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,11 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
         holder.txtAula.setText(registrado.getAula());
         holder.txtFecha.setText(registrado.getDia() + "-" + registrado.getMes() + "-" + registrado.getAnio() + " " +
         registrado.getHora() + ":" + registrado.getMinuto());
+//        if(registrado.getSubido() == 1){
+//            holder.cv.setCardBackgroundColor(Color.WHITE);
+//        }else{
+//            holder.cv.setCardBackgroundColor(Color.rgb(227,242,253));
+//        }
     }
 
     public String checkDigito (int number) {
@@ -54,8 +61,10 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
         TextView txtSede;
         TextView txtAula;
         TextView txtFecha;
+        CardView cv;
         public ViewHolder(View itemView) {
             super(itemView);
+            cv = itemView.findViewById(R.id.item_registrado_cv);
             txtDni = itemView.findViewById(R.id.item_registrado_txtDni);
             txtNombres = itemView.findViewById(R.id.item_registrado_txtNombres);
             txtSede = itemView.findViewById(R.id.item_registrado_txtSede);
