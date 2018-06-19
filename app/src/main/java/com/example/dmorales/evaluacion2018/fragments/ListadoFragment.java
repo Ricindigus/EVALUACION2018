@@ -98,9 +98,10 @@ public class ListadoFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     for (final Registrado registrado : agregados){
                         registrado.setSubido(1);
+                        String fecha = registrado.getDia() + "-" + registrado.getMes() + "-" + registrado.getAnio();
                         final String c = registrado.getCodigo();
                         Toast.makeText(context, "Subiendo...", Toast.LENGTH_SHORT).show();
-                        db.collection("asistencias").document(registrado.getCodigo()).set(registrado)
+                        db.collection(fecha).document(registrado.getCodigo()).set(registrado)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -149,6 +150,10 @@ public class ListadoFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String checkDigito (int number) {
+        return number <= 9 ? "0" + number : String.valueOf(number);
     }
 
     public void mostrarMensaje(String m){

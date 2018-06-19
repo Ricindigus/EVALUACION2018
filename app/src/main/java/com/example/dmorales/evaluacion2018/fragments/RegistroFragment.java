@@ -167,7 +167,7 @@ public class RegistroFragment extends Fragment {
                         txtRegistroAula.setText("Aula " + nacional.getAula());
                         Calendar calendario = Calendar.getInstance();
                         int yy = calendario.get(Calendar.YEAR);
-                        int mm = calendario.get(Calendar.MONTH);
+                        int mm = calendario.get(Calendar.MONTH)+1;
                         int dd = calendario.get(Calendar.DAY_OF_MONTH);
                         int hora = calendario.get(Calendar.HOUR_OF_DAY);
                         int minuto = calendario.get(Calendar.MINUTE);

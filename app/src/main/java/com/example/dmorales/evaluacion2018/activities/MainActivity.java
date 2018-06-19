@@ -113,17 +113,35 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.menu_reset_bd) {
-            try {
-                Data data = new Data(this);
-                data.open();
-                data.deleteAllElementosFromTabla(SQLConstantes.tablafecharegistro);
-                data.close();
-                ListadoFragment listadoFragment = new ListadoFragment(sede,MainActivity.this);
-                fragmentTransaction.replace(R.id.fragment_layout, listadoFragment);
-                fragmentTransaction.commit();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("¿Está seguro que desea borrar los datos?")
+                    .setTitle("Aviso")
+                    .setCancelable(false)
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            try {
+                                Data data = new Data(MainActivity.this);
+                                data.open();
+                                data.deleteAllElementosFromTabla(SQLConstantes.tablafecharegistro);
+                                data.close();
+                                ListadoFragment listadoFragment = new ListadoFragment(sede,MainActivity.this);
+                                FragmentManager fragmentManage = getSupportFragmentManager();
+                                FragmentTransaction fragmentTransact = fragmentManage.beginTransaction();
+                                fragmentTransact.replace(R.id.fragment_layout, listadoFragment);
+                                fragmentTransact.commit();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+
 
         } else if (id == R.id.menu_cerrar_sesion) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
