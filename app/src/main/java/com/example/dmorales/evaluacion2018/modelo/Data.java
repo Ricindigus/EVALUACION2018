@@ -1,5 +1,6 @@
 package com.example.dmorales.evaluacion2018.modelo;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,12 @@ public class Data {
         createDataBase();
     }
 
+    public Data(Context contexto, String inputPath) throws IOException {
+        this.contexto = contexto;
+        sqLiteOpenHelper = new DataBaseHelper(contexto);
+        createDataBase(inputPath);
+    }
+
     public void createDataBase() throws IOException {
         boolean dbExist = checkDataBase();
         if(!dbExist){
@@ -39,6 +47,27 @@ public class Data {
             }catch (IOException e){
                 throw new Error("Error: copiando base de datos");
             }
+        }
+
+    }
+
+    @SuppressLint("NewApi")
+    public void createDataBase(String inputPath) throws IOException {
+        boolean dbExist = checkDataBase();
+        if(dbExist){
+            File dbFile = new File(SQLConstantes.DB_PATH + SQLConstantes.DB_NAME);
+            SQLiteDatabase.deleteDatabase(dbFile);
+        }
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+        sqLiteDatabase.close();
+        try{
+            copyDataBase(inputPath);
+            sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+            sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO);
+            sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO_TEMPORAL);
+            sqLiteDatabase.close();
+        }catch (IOException e){
+            throw new Error("Error: copiando base de datos");
         }
 
     }
@@ -61,6 +90,23 @@ public class Data {
     }
 
 
+    public void copyDataBase(String inputPath) throws IOException{
+//        InputStream myInput = contexto.getAssets().open(SQLConstantes.DB_NAME);
+        InputStream myInput = new FileInputStream(inputPath);
+        String outFileName = SQLConstantes.DB_PATH + SQLConstantes.DB_NAME;
+        OutputStream myOutput = new FileOutputStream(outFileName);
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = myInput.read(buffer)) != -1){
+            if (length > 0){
+                myOutput.write(buffer,0,length);
+            }
+        }
+        myOutput.flush();
+        myInput.close();
+        myOutput.close();
+
+    }
 
     public void open() throws SQLException {
         String myPath = SQLConstantes.DB_PATH + SQLConstantes.DB_NAME;
