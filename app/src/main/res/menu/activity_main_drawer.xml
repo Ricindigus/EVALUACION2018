@@ -3,9 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
     <item
-        android:id="@+id/menu_registro"
+        android:id="@+id/menu_registro_entrada"
         android:icon="@drawable/ic_account_box"
-        android:title="Registro de Asistencia" />
+        android:title="Registro de Entrada" />
+    <item
+        android:id="@+id/menu_registro_salida"
+        android:icon="@drawable/ic_account_box"
+        android:title="Registro de Salida" />
     <item
         android:id="@+id/menu_listado"
         android:icon="@drawable/ic_library_books"

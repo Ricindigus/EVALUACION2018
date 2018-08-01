@@ -3,12 +3,9 @@ package com.example.dmorales.evaluacion2018.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,12 +13,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.dmorales.evaluacion2018.R;
 import com.example.dmorales.evaluacion2018.fragments.ListadoFragment;
 import com.example.dmorales.evaluacion2018.fragments.NubeFragment;
-import com.example.dmorales.evaluacion2018.fragments.RegistroFragment;
+import com.example.dmorales.evaluacion2018.fragments.EntradaFragment;
 import com.example.dmorales.evaluacion2018.modelo.Data;
 import com.example.dmorales.evaluacion2018.modelo.SQLConstantes;
 
@@ -53,8 +49,8 @@ public class MainActivity extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        RegistroFragment registroFragment = new RegistroFragment(sede,MainActivity.this);
-        fragmentTransaction.replace(R.id.fragment_layout, registroFragment);
+        EntradaFragment entradaFragment = new EntradaFragment(sede,MainActivity.this);
+        fragmentTransaction.replace(R.id.fragment_layout, entradaFragment);
         fragmentTransaction.commit();
     }
 
@@ -99,8 +95,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.menu_registro) {
-            RegistroFragment registroFragment = new RegistroFragment(sede,MainActivity.this);
-            fragmentTransaction.replace(R.id.fragment_layout, registroFragment);
+            EntradaFragment entradaFragment = new EntradaFragment(sede,MainActivity.this);
+            fragmentTransaction.replace(R.id.fragment_layout, entradaFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.menu_listado) {
@@ -127,7 +123,7 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 Data data = new Data(MainActivity.this);
                                 data.open();
-                                data.deleteAllElementosFromTabla(SQLConstantes.tablafecharegistro);
+                                data.deleteAllElementosFromTabla(SQLConstantes.tablaregistro);
                                 data.close();
                                 ListadoFragment listadoFragment = new ListadoFragment(sede,MainActivity.this);
                                 FragmentManager fragmentManage = getSupportFragmentManager();

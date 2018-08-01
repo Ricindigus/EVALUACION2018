@@ -41,8 +41,8 @@ public class Data {
             try{
                 copyDataBase();
                 sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
-                sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO);
-                sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO_TEMPORAL);
+                sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_REGISTRO);
+//                sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO_TEMPORAL);
                 sqLiteDatabase.close();
             }catch (IOException e){
                 throw new Error("Error: copiando base de datos");
@@ -63,8 +63,8 @@ public class Data {
         try{
             copyDataBase(inputPath);
             sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
-            sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO);
-            sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO_TEMPORAL);
+            sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_REGISTRO);
+//            sqLiteDatabase.execSQL(SQLConstantes.SQL_CREATE_TABLA_FECHA_REGISTRO_TEMPORAL);
             sqLiteDatabase.close();
         }catch (IOException e){
             throw new Error("Error: copiando base de datos");
@@ -176,125 +176,137 @@ public class Data {
         return nacional;
     }
 
-    public void insertarFechaRegistro(Registrado registrado){
-        ContentValues contentValues = registrado.toValues();
-        sqLiteDatabase.insert(SQLConstantes.tablafecharegistro,null,contentValues);
+    public void insertarFechaRegistro(RegistroAsistencia registroAsistencia){
+        ContentValues contentValues = registroAsistencia.toValues();
+        sqLiteDatabase.insert(SQLConstantes.tablaregistro,null,contentValues);
     }
 
     public void actualizarFechaRegistro(String codigo, ContentValues valores){
         String[] whereArgs = new String[]{codigo};
-        sqLiteDatabase.update(SQLConstantes.tablafecharegistro,valores,SQLConstantes.WHERE_CLAUSE_CODIGO,whereArgs);
+        sqLiteDatabase.update(SQLConstantes.tablaregistro,valores,SQLConstantes.WHERE_CLAUSE_CODIGO,whereArgs);
     }
 
-    public Registrado getFechaRegistro(String dni){
-        Registrado registrado = null;
+    public RegistroAsistencia getFechaRegistro(String dni){
+        RegistroAsistencia registroAsistencia = null;
         String[] whereArgs = new String[]{dni};
         Cursor cursor = null;
         try{
-            cursor = sqLiteDatabase.query(SQLConstantes.tablafecharegistro,
-                    SQLConstantes.COLUMNAS_FECHA_REGISTRO,SQLConstantes.WHERE_CLAUSE_CODIGO,whereArgs,null,null,null);
+            cursor = sqLiteDatabase.query(SQLConstantes.tablaregistro,
+                    SQLConstantes.COLUMNAS_REGISTRO,SQLConstantes.WHERE_CLAUSE_CODIGO,whereArgs,null,null,null);
             if(cursor.getCount() == 1){
                 cursor.moveToFirst();
-                registrado = new Registrado();
-                registrado.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_codigo)));
-                registrado.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_nombres)));
-                registrado.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_sede)));
-                registrado.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_aula)));
-                registrado.setDia(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_dia)));
-                registrado.setMes(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_mes)));
-                registrado.setAnio(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_anio)));
-                registrado.setHora(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_hora)));
-                registrado.setMinuto(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_minuto)));
-                registrado.setSubido(cursor.getInt(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_subido)));
+                registroAsistencia = new RegistroAsistencia();
+                registroAsistencia.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_codigo)));
+                registroAsistencia.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_nombres)));
+                registroAsistencia.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_sede)));
+                registroAsistencia.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_aula)));
+                registroAsistencia.setDia(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_dia)));
+                registroAsistencia.setMes(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_mes)));
+                registroAsistencia.setAnio(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_anio)));
+                registroAsistencia.setHoraEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_entrada)));
+                registroAsistencia.setMinutoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_entrada)));
+                registroAsistencia.setSubidoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_entrada)));
+                registroAsistencia.setHoraSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_salida)));
+                registroAsistencia.setMinutoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_salida)));
+                registroAsistencia.setSubidoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_salida)));
             }
         }finally{
             if(cursor != null) cursor.close();
         }
-        return registrado;
+        return registroAsistencia;
     }
 
-    public ArrayList<Registrado> getAllRegistrados(String sede){
-        ArrayList<Registrado> registrados = new ArrayList<>();
-        String[] whereArgs = new String[]{sede};
+    public ArrayList<RegistroAsistencia> getAllRegistrados(String sede, int dia, int mes, int anio){
+        ArrayList<RegistroAsistencia> registroAsistencias = new ArrayList<>();
+        String[] whereArgs = new String[]{sede,Integer.toString(dia),Integer.toString(mes),Integer.toString(anio)};
         Cursor cursor = null;
         try{
-            cursor = sqLiteDatabase.query(SQLConstantes.tablafecharegistro,
-                    null,SQLConstantes.WHERE_CLAUSE_SEDE,whereArgs,null,null,null);
+            cursor = sqLiteDatabase.query(SQLConstantes.tablaregistro,
+                    null,SQLConstantes.WHERE_CLAUSE_SEDE + " AND " +
+                    SQLConstantes.WHERE_CLAUSE_DIA + " AND " +
+                    SQLConstantes.WHERE_CLAUSE_MES + " AND " +
+                    SQLConstantes.WHERE_CLAUSE_ANIO, whereArgs,null,null,null);
             while(cursor.moveToNext()){
-                Registrado registrado = new Registrado();
-                registrado.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_codigo)));
-                registrado.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_nombres)));
-                registrado.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_sede)));
-                registrado.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_aula)));
-                registrado.setDia(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_dia)));
-                registrado.setMes(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_mes)));
-                registrado.setAnio(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_anio)));
-                registrado.setHora(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_hora)));
-                registrado.setMinuto(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_minuto)));
-                registrado.setSubido(cursor.getInt(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_subido)));
-                registrados.add(registrado);
+                RegistroAsistencia registroAsistencia = new RegistroAsistencia();
+                registroAsistencia.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_codigo)));
+                registroAsistencia.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_nombres)));
+                registroAsistencia.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_sede)));
+                registroAsistencia.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_aula)));
+                registroAsistencia.setDia(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_dia)));
+                registroAsistencia.setMes(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_mes)));
+                registroAsistencia.setAnio(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_anio)));
+                registroAsistencia.setHoraEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_entrada)));
+                registroAsistencia.setMinutoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_entrada)));
+                registroAsistencia.setSubidoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_entrada)));
+                registroAsistencia.setHoraSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_salida)));
+                registroAsistencia.setMinutoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_salida)));
+                registroAsistencia.setSubidoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_salida)));
+                registroAsistencias.add(registroAsistencia);
             }
         }finally{
             if(cursor != null) cursor.close();
         }
-        return registrados;
+        return registroAsistencias;
     }
 
-    public ArrayList<Registrado> getAllRegistradosTemporal(){
-        ArrayList<Registrado> registrados = new ArrayList<>();
-        String[] whereArgs = new String[]{"0"};
+    public ArrayList<RegistroAsistencia> getAllRegistradosSinEnviar(String sede, int dia, int mes, int anio){
+        ArrayList<RegistroAsistencia> registroAsistencias = new ArrayList<>();
+        String[] whereArgs = new String[]{"0","0"};
         Cursor cursor = null;
         try{
-            cursor = sqLiteDatabase.query(SQLConstantes.tablafecharegistro,
-                    null,SQLConstantes.WHERE_CLAUSE_SUBIDO,whereArgs,null,null,null);
+            cursor = sqLiteDatabase.query(SQLConstantes.tablaregistro,
+                    null,SQLConstantes.WHERE_CLAUSE_SUBIDO_ENTRADA + " OR " + SQLConstantes.WHERE_CLAUSE_SUBIDO_SALIDA,
+                    whereArgs,null,null,null);
             while(cursor.moveToNext()){
-                Registrado registrado = new Registrado();
-                registrado.set_id(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_id)));
-                registrado.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_codigo)));
-                registrado.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_nombres)));
-                registrado.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_sede)));
-                registrado.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_aula)));
-                registrado.setDia(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_dia)));
-                registrado.setMes(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_mes)));
-                registrado.setAnio(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_anio)));
-                registrado.setHora(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_hora)));
-                registrado.setMinuto(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_minuto)));
-                registrado.setSubido(cursor.getInt(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_subido)));
-                registrados.add(registrado);
+                RegistroAsistencia registroAsistencia = new RegistroAsistencia();
+                registroAsistencia.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_codigo)));
+                registroAsistencia.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_nombres)));
+                registroAsistencia.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_sede)));
+                registroAsistencia.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_aula)));
+                registroAsistencia.setDia(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_dia)));
+                registroAsistencia.setMes(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_mes)));
+                registroAsistencia.setAnio(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_anio)));
+                registroAsistencia.setHoraEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_entrada)));
+                registroAsistencia.setMinutoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_entrada)));
+                registroAsistencia.setSubidoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_entrada)));
+                registroAsistencia.setHoraSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_salida)));
+                registroAsistencia.setMinutoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_salida)));
+                registroAsistencia.setSubidoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_salida)));
+                registroAsistencias.add(registroAsistencia);
             }
         }finally{
             if(cursor != null) cursor.close();
         }
-        return registrados;
+        return registroAsistencias;
     }
 
-    public ArrayList<Registrado> getAllRegistradosNube(){
-        ArrayList<Registrado> registrados = new ArrayList<>();
-        String[] whereArgs = new String[]{"1"};
-        Cursor cursor = null;
-        try{
-            cursor = sqLiteDatabase.query(SQLConstantes.tablafecharegistro,
-                    null,SQLConstantes.WHERE_CLAUSE_SUBIDO,whereArgs,null,null,null);
-            while(cursor.moveToNext()){
-                Registrado registrado = new Registrado();
-                registrado.set_id(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_id)));
-                registrado.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_codigo)));
-                registrado.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_nombres)));
-                registrado.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_sede)));
-                registrado.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_aula)));
-                registrado.setDia(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_dia)));
-                registrado.setMes(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_mes)));
-                registrado.setAnio(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_anio)));
-                registrado.setHora(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_hora)));
-                registrado.setMinuto(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_minuto)));
-                registrado.setSubido(cursor.getInt(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_subido)));
-                registrados.add(registrado);
-            }
-        }finally{
-            if(cursor != null) cursor.close();
-        }
-        return registrados;
-    }
+//    public ArrayList<RegistroAsistencia> getAllRegistradosNube(){
+//        ArrayList<RegistroAsistencia> registroAsistencias = new ArrayList<>();
+//        String[] whereArgs = new String[]{"1"};
+//        Cursor cursor = null;
+//        try{
+//            cursor = sqLiteDatabase.query(SQLConstantes.tablaregistro,
+//                    null,SQLConstantes.WHERE_CLAUSE_SUBIDO,whereArgs,null,null,null);
+//            while(cursor.moveToNext()){
+//                RegistroAsistencia registroAsistencia = new RegistroAsistencia();
+//                registroAsistencia.set_id(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_id)));
+//                registroAsistencia.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_codigo)));
+//                registroAsistencia.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_nombres)));
+//                registroAsistencia.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_sede)));
+//                registroAsistencia.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_aula)));
+//                registroAsistencia.setDia(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_dia)));
+//                registroAsistencia.setMes(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_mes)));
+//                registroAsistencia.setAnio(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_anio)));
+//                registroAsistencia.setHoraEntrada(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_hora)));
+//                registroAsistencia.setMinutoEntrada(cursor.getString(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_minuto)));
+//                registroAsistencia.setSubidoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.fecha_de_registro_subido)));
+//                registroAsistencias.add(registroAsistencia);
+//            }
+//        }finally{
+//            if(cursor != null) cursor.close();
+//        }
+//        return registroAsistencias;
+//    }
 
     public void deleteAllElementosFromTabla(String nombreTabla){
         sqLiteDatabase.execSQL("delete from "+ nombreTabla);

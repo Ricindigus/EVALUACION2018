@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.example.dmorales.evaluacion2018.R;
 import com.example.dmorales.evaluacion2018.adapters.RegistradoAdapter;
 import com.example.dmorales.evaluacion2018.modelo.Data;
-import com.example.dmorales.evaluacion2018.modelo.Registrado;
+import com.example.dmorales.evaluacion2018.modelo.RegistroAsistencia;
 import com.example.dmorales.evaluacion2018.modelo.SQLConstantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,8 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,8 +39,8 @@ import java.util.Map;
 public class ListadoFragment extends Fragment {
     RecyclerView recyclerView;
     Context context;
-    ArrayList<Registrado> registrados;
-    ArrayList<Registrado> agregados;
+    ArrayList<RegistroAsistencia> registroAsistencias;
+    ArrayList<RegistroAsistencia> agregados;
     String sede;
     Data data;
     FloatingActionButton fabUpLoad;
@@ -77,7 +76,7 @@ public class ListadoFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         cargaData();
-        final RegistradoAdapter registradoAdapter = new RegistradoAdapter(registrados,context);
+        final RegistradoAdapter registradoAdapter = new RegistradoAdapter(registroAsistencias,context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(registradoAdapter);
 
@@ -89,19 +88,23 @@ public class ListadoFragment extends Fragment {
                 try {
                     data = new Data(context);
                     data.open();
-                    agregados = data.getAllRegistradosTemporal();
+                    Calendar calendario = Calendar.getInstance();
+                    int yy = calendario.get(Calendar.YEAR);
+                    int mm = calendario.get(Calendar.MONTH)+1;
+                    int dd = calendario.get(Calendar.DAY_OF_MONTH);
+                    agregados = data.getAllRegistradosSinEnviar(sede,dd,mm,yy);
                     data.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 if(agregados.size() > 0){
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    for (final Registrado registrado : agregados){
-                        registrado.setSubido(1);
-                        String fecha = registrado.getDia() + "-" + registrado.getMes() + "-" + registrado.getAnio();
-                        final String c = registrado.getCodigo();
-                        Toast.makeText(context, "Subiendo...", Toast.LENGTH_SHORT).show();
-                        db.collection(fecha).document(registrado.getCodigo()).set(registrado)
+                    Toast.makeText(context, "Subiendo...", Toast.LENGTH_SHORT).show();
+                    for (final RegistroAsistencia registroAsistencia : agregados){
+                        registroAsistencia.setSubidoEntrada(1);
+                        String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
+                        final String c = registroAsistencia.getCodigo();
+                        db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -114,7 +117,7 @@ public class ListadoFragment extends Fragment {
                                             data = new Data(context);
                                             data.open();
                                             ContentValues contentValues = new ContentValues();
-                                            contentValues.put(SQLConstantes.fecha_de_registro_subido,1);
+                                            contentValues.put(SQLConstantes.registro_subido_entrada,1);
                                             data.actualizarFechaRegistro(c,contentValues);
                                             cargaData();
                                             registradoAdapter.notifyDataSetChanged();
@@ -140,12 +143,16 @@ public class ListadoFragment extends Fragment {
     }
 
     public void cargaData(){
-        registrados = new ArrayList<>();
+        registroAsistencias = new ArrayList<>();
         try {
             Data data = new Data(context);
             data.open();
-            registrados = data.getAllRegistrados(sede);
-            txtNumero.setText("Total registros: " + registrados.size());
+            Calendar calendario = Calendar.getInstance();
+            int yy = calendario.get(Calendar.YEAR);
+            int mm = calendario.get(Calendar.MONTH)+1;
+            int dd = calendario.get(Calendar.DAY_OF_MONTH);
+            registroAsistencias = data.getAllRegistrados(sede,dd,mm,yy);
+            txtNumero.setText("Total registros: " + registroAsistencias.size());
             data.close();
         } catch (IOException e) {
             e.printStackTrace();

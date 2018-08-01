@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 import com.example.dmorales.evaluacion2018.R;
 import com.example.dmorales.evaluacion2018.adapters.RegistradoAdapter;
 import com.example.dmorales.evaluacion2018.modelo.Data;
-import com.example.dmorales.evaluacion2018.modelo.Registrado;
+import com.example.dmorales.evaluacion2018.modelo.RegistroAsistencia;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.ArrayList;
 public class NubeFragment extends Fragment {
     RecyclerView recyclerView;
     Context context;
-    ArrayList<Registrado> registrados;
+    ArrayList<RegistroAsistencia> registroAsistencias;
     String sede;
     TextView txtNumero;
 
@@ -58,21 +57,21 @@ public class NubeFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         cargaData();
-        final RegistradoAdapter registradoAdapter = new RegistradoAdapter(registrados,context);
+        final RegistradoAdapter registradoAdapter = new RegistradoAdapter(registroAsistencias,context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(registradoAdapter);
     }
 
     public void cargaData(){
-        registrados = new ArrayList<>();
-        try {
-            Data data = new Data(context);
-            data.open();
-            registrados = data.getAllRegistradosNube();
-            txtNumero.setText("Total enviados: " + registrados.size());
-            data.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        registroAsistencias = new ArrayList<>();
+//        try {
+//            Data data = new Data(context);
+//            data.open();
+//            registroAsistencias = data.getAllRegistradosNube();
+//            txtNumero.setText("Total enviados: " + registroAsistencias.size());
+//            data.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

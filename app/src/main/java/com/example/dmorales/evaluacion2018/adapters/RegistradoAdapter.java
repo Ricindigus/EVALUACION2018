@@ -1,7 +1,6 @@
 package com.example.dmorales.evaluacion2018.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,16 +9,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.dmorales.evaluacion2018.R;
-import com.example.dmorales.evaluacion2018.modelo.Registrado;
+import com.example.dmorales.evaluacion2018.modelo.RegistroAsistencia;
 
 import java.util.ArrayList;
 
 public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.ViewHolder>{
-    ArrayList<Registrado> registrados;
+    ArrayList<RegistroAsistencia> registroAsistencias;
     Context context;
 
-    public RegistradoAdapter(ArrayList<Registrado> registrados, Context context) {
-        this.registrados = registrados;
+    public RegistradoAdapter(ArrayList<RegistroAsistencia> registroAsistencias, Context context) {
+        this.registroAsistencias = registroAsistencias;
         this.context = context;
     }
 
@@ -32,14 +31,14 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Registrado registrado = registrados.get(position);
-        holder.txtDni.setText(registrado.getCodigo());
-        holder.txtNombres.setText(registrado.getNombres());
-        holder.txtSede.setText(registrado.getSede());
-        holder.txtAula.setText(registrado.getAula());
-        holder.txtFecha.setText(registrado.getDia() + "-" + registrado.getMes() + "-" + registrado.getAnio() + " " +
-        registrado.getHora() + ":" + registrado.getMinuto());
-//        if(registrado.getSubido() == 1){
+        RegistroAsistencia registroAsistencia = registroAsistencias.get(position);
+        holder.txtDni.setText(registroAsistencia.getCodigo());
+        holder.txtNombres.setText(registroAsistencia.getNombres());
+        holder.txtSede.setText(registroAsistencia.getSede());
+        holder.txtAula.setText(registroAsistencia.getAula());
+        holder.txtFecha.setText(registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio() + " " +
+        registroAsistencia.getHoraEntrada() + ":" + registroAsistencia.getMinutoEntrada());
+//        if(registroAsistencia.getSubidoEntrada() == 1){
 //            holder.cv.setCardBackgroundColor(Color.WHITE);
 //        }else{
 //            holder.cv.setCardBackgroundColor(Color.rgb(227,242,253));
@@ -52,7 +51,7 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return registrados.size();
+        return registroAsistencias.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
