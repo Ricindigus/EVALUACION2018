@@ -18,6 +18,7 @@ import com.example.dmorales.evaluacion2018.R;
 import com.example.dmorales.evaluacion2018.fragments.ListadoFragment;
 import com.example.dmorales.evaluacion2018.fragments.NubeFragment;
 import com.example.dmorales.evaluacion2018.fragments.EntradaFragment;
+import com.example.dmorales.evaluacion2018.fragments.SalidaFragment;
 import com.example.dmorales.evaluacion2018.modelo.Data;
 import com.example.dmorales.evaluacion2018.modelo.SQLConstantes;
 
@@ -98,7 +99,10 @@ public class MainActivity extends AppCompatActivity
             EntradaFragment entradaFragment = new EntradaFragment(sede,MainActivity.this);
             fragmentTransaction.replace(R.id.fragment_layout, entradaFragment);
             fragmentTransaction.commit();
-
+        } else if (id == R.id.menu_registro_salida) {
+            SalidaFragment salidaFragment = new SalidaFragment(sede,MainActivity.this);
+            fragmentTransaction.replace(R.id.fragment_layout, salidaFragment);
+            fragmentTransaction.commit();
         } else if (id == R.id.menu_listado) {
             ListadoFragment listadoFragment = new ListadoFragment(sede,MainActivity.this);
             fragmentTransaction.replace(R.id.fragment_layout, listadoFragment);

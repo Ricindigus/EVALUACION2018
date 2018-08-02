@@ -176,23 +176,57 @@ public class Data {
         return nacional;
     }
 
-    public void insertarFechaRegistro(RegistroAsistencia registroAsistencia){
+    public void insertarRegistro(RegistroAsistencia registroAsistencia){
         ContentValues contentValues = registroAsistencia.toValues();
         sqLiteDatabase.insert(SQLConstantes.tablaregistro,null,contentValues);
     }
 
-    public void actualizarFechaRegistro(String codigo, ContentValues valores){
+    public void actualizarRegistro(String codigo, ContentValues valores){
         String[] whereArgs = new String[]{codigo};
         sqLiteDatabase.update(SQLConstantes.tablaregistro,valores,SQLConstantes.WHERE_CLAUSE_CODIGO,whereArgs);
     }
 
-    public RegistroAsistencia getFechaRegistro(String dni){
+    public RegistroAsistencia getRegistro(String dni){
         RegistroAsistencia registroAsistencia = null;
         String[] whereArgs = new String[]{dni};
         Cursor cursor = null;
         try{
             cursor = sqLiteDatabase.query(SQLConstantes.tablaregistro,
                     SQLConstantes.COLUMNAS_REGISTRO,SQLConstantes.WHERE_CLAUSE_CODIGO,whereArgs,null,null,null);
+            if(cursor.getCount() == 1){
+                cursor.moveToFirst();
+                registroAsistencia = new RegistroAsistencia();
+                registroAsistencia.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_codigo)));
+                registroAsistencia.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_nombres)));
+                registroAsistencia.setSede(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_sede)));
+                registroAsistencia.setAula(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_aula)));
+                registroAsistencia.setDia(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_dia)));
+                registroAsistencia.setMes(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_mes)));
+                registroAsistencia.setAnio(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_anio)));
+                registroAsistencia.setHoraEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_entrada)));
+                registroAsistencia.setMinutoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_entrada)));
+                registroAsistencia.setSubidoEntrada(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_entrada)));
+                registroAsistencia.setHoraSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_hora_salida)));
+                registroAsistencia.setMinutoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_minuto_salida)));
+                registroAsistencia.setSubidoSalida(cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_salida)));
+            }
+        }finally{
+            if(cursor != null) cursor.close();
+        }
+        return registroAsistencia;
+    }
+
+    public RegistroAsistencia getRegistro(String dni, int dia, int mes, int anio){
+        RegistroAsistencia registroAsistencia = null;
+        String[] whereArgs = new String[]{dni,Integer.toString(dia),Integer.toString(mes),Integer.toString(anio)};
+        Cursor cursor = null;
+        try{
+            cursor = sqLiteDatabase.query(SQLConstantes.tablaregistro, SQLConstantes.COLUMNAS_REGISTRO,
+                    SQLConstantes.WHERE_CLAUSE_CODIGO+ " AND " +
+                            SQLConstantes.WHERE_CLAUSE_DIA + " AND " +
+                            SQLConstantes.WHERE_CLAUSE_MES + " AND " +
+                            SQLConstantes.WHERE_CLAUSE_ANIO
+                    ,whereArgs,null,null,null);
             if(cursor.getCount() == 1){
                 cursor.moveToFirst();
                 registroAsistencia = new RegistroAsistencia();
@@ -261,7 +295,8 @@ public class Data {
                             SQLConstantes.WHERE_CLAUSE_ANIO, whereArgs,null,null,null);
             while(cursor.moveToNext()){
                 int subidoEntrada = cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_entrada));
-                if(subidoEntrada == 0){
+                int subidoSalida = cursor.getInt(cursor.getColumnIndex(SQLConstantes.registro_subido_salida));
+                if(subidoEntrada == 0 || subidoSalida == 0){
                     RegistroAsistencia registroAsistencia = new RegistroAsistencia();
                     registroAsistencia.setCodigo(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_codigo)));
                     registroAsistencia.setNombres(cursor.getString(cursor.getColumnIndex(SQLConstantes.registro_nombres)));

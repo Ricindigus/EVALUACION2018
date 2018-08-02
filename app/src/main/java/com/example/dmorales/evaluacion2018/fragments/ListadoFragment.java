@@ -101,7 +101,13 @@ public class ListadoFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     Toast.makeText(context, "Subiendo...", Toast.LENGTH_SHORT).show();
                     for (final RegistroAsistencia registroAsistencia : agregados){
-                        registroAsistencia.setSubidoEntrada(1);
+                        if (registroAsistencia.getSubidoEntrada() == 0){
+                            registroAsistencia.setSubidoEntrada(1);
+                            if(registroAsistencia.getSubidoSalida() == 0)
+                        }
+
+
+                        if (registroAsistencia.getSubidoSalida() == 0)registroAsistencia.setSubidoSalida(1);
                         String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
                         final String c = registroAsistencia.getCodigo();
                         db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
@@ -118,7 +124,7 @@ public class ListadoFragment extends Fragment {
                                             data.open();
                                             ContentValues contentValues = new ContentValues();
                                             contentValues.put(SQLConstantes.registro_subido_entrada,1);
-                                            data.actualizarFechaRegistro(c,contentValues);
+                                            data.actualizarRegistro(c,contentValues);
                                             cargaData();
                                             registradoAdapter.notifyDataSetChanged();
                                             data.close();

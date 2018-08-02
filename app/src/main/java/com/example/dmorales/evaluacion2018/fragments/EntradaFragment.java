@@ -146,7 +146,7 @@ public class EntradaFragment extends Fragment {
                 if(sede.equals(nacional.getSede())){
                     data = new Data(context);
                     data.open();
-                    RegistroAsistencia registroAsistencia = data.getFechaRegistro(nacional.getCodigo());
+                    RegistroAsistencia registroAsistencia = data.getRegistro(nacional.getCodigo());
                     if(registroAsistencia != null){
                         cvError.setVisibility(View.GONE);
                         cvNoregistrado.setVisibility(View.GONE);
@@ -172,7 +172,7 @@ public class EntradaFragment extends Fragment {
 
                         RegistroAsistencia registroAsistencia1 = new RegistroAsistencia(dni,dni,nacional.getApepat(), nacional.getSede(), nacional.getAula(),dd,
                                 mm,yy,hora,minuto,0,0,0,-1);
-                        data.insertarFechaRegistro(registroAsistencia1);
+                        data.insertarRegistro(registroAsistencia1);
                     }
                     data.close();
                 }else{
