@@ -103,42 +103,44 @@ public class ListadoFragment extends Fragment {
                     for (final RegistroAsistencia registroAsistencia : agregados){
                         if (registroAsistencia.getSubidoEntrada() == 0){
                             registroAsistencia.setSubidoEntrada(1);
-                            if(registroAsistencia.getSubidoSalida() == 0)
+                            if(registroAsistencia.getSubidoSalida() == 0)registroAsistencia.setSubidoSalida(1);
+                            String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
+                            final String c = registroAsistencia.getCodigo();
+                            db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
+                                            if(!b){
+                                                Toast.makeText(context, agregados.size() +" registros subidos", Toast.LENGTH_SHORT).show();
+                                                b =true;
+                                            }
+                                            try {
+                                                data = new Data(context);
+                                                data.open();
+                                                ContentValues contentValues = new ContentValues();
+                                                contentValues.put(SQLConstantes.registro_subido_entrada,1);
+                                                contentValues.put(SQLConstantes.registro_subido_entrada,1);
+                                                data.actualizarRegistro(c,contentValues);
+                                                cargaData();
+                                                registradoAdapter.notifyDataSetChanged();
+                                                data.close();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("FIRESTORE", "Error writing document", e);
+                                        }
+                                    });
                         }
 
 
-                        if (registroAsistencia.getSubidoSalida() == 0)registroAsistencia.setSubidoSalida(1);
-                        String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
-                        final String c = registroAsistencia.getCodigo();
-                        db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
-                                        if(!b){
-                                            Toast.makeText(context, agregados.size() +" registros subidos", Toast.LENGTH_SHORT).show();
-                                            b =true;
-                                        }
-                                        try {
-                                            data = new Data(context);
-                                            data.open();
-                                            ContentValues contentValues = new ContentValues();
-                                            contentValues.put(SQLConstantes.registro_subido_entrada,1);
-                                            data.actualizarRegistro(c,contentValues);
-                                            cargaData();
-                                            registradoAdapter.notifyDataSetChanged();
-                                            data.close();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("FIRESTORE", "Error writing document", e);
-                                    }
-                                });
+
+
                     }
                 }else{
                     Toast.makeText(context, "No hay registros nuevos para subir", Toast.LENGTH_SHORT).show();
