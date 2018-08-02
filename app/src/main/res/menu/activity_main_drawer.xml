@@ -8,7 +8,7 @@
         android:title="Registro de Entrada" />
     <item
         android:id="@+id/menu_registro_salida"
-        android:icon="@drawable/ic_account_box"
+        android:icon="@drawable/ic_exit_to_app"
         android:title="Registro de Salida" />
     <item
         android:id="@+id/menu_listado"

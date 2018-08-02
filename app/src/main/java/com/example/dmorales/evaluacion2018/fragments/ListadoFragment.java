@@ -92,7 +92,7 @@ public class ListadoFragment extends Fragment {
                     int yy = calendario.get(Calendar.YEAR);
                     int mm = calendario.get(Calendar.MONTH)+1;
                     int dd = calendario.get(Calendar.DAY_OF_MONTH);
-                    agregados = data.getAllRegistradosSinEnviar(sede,dd,mm,yy);
+                    agregados = data.getAllEntradaSinEnviar(sede,dd,mm,yy);
                     data.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -174,4 +174,6 @@ public class ListadoFragment extends Fragment {
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+
 }

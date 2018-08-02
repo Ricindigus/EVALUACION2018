@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         int id = item.getItemId();
 
-        if (id == R.id.menu_registro) {
+        if (id == R.id.menu_registro_entrada) {
             EntradaFragment entradaFragment = new EntradaFragment(sede,MainActivity.this);
             fragmentTransaction.replace(R.id.fragment_layout, entradaFragment);
             fragmentTransaction.commit();

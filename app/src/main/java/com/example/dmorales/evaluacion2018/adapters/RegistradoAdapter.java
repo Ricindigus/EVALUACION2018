@@ -36,8 +36,10 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
         holder.txtNombres.setText(registroAsistencia.getNombres());
         holder.txtSede.setText(registroAsistencia.getSede());
         holder.txtAula.setText(registroAsistencia.getAula());
-        holder.txtFecha.setText(registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio() + " " +
-        registroAsistencia.getHoraEntrada() + ":" + registroAsistencia.getMinutoEntrada());
+        holder.txtFecha.setText(checkDigito(registroAsistencia.getDia()) + "-" + checkDigito(registroAsistencia.getMes()) + "-" + checkDigito(registroAsistencia.getAnio()));
+        holder.txtEntrada.setText(checkDigito(registroAsistencia.getHoraEntrada()) + ":" + checkDigito(registroAsistencia.getMinutoEntrada()));
+        holder.txtSalida.setText(checkDigito(registroAsistencia.getHoraSalida()) + ":" + checkDigito(registroAsistencia.getMinutoSalida()));
+
 //        if(registroAsistencia.getSubidoEntrada() == 1){
 //            holder.cv.setCardBackgroundColor(Color.WHITE);
 //        }else{
@@ -60,6 +62,9 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
         TextView txtSede;
         TextView txtAula;
         TextView txtFecha;
+        TextView txtEntrada;
+        TextView txtSalida;
+
         CardView cv;
         public ViewHolder(View itemView) {
             super(itemView);
@@ -69,6 +74,8 @@ public class RegistradoAdapter extends RecyclerView.Adapter<RegistradoAdapter.Vi
             txtSede = itemView.findViewById(R.id.item_registrado_txtSede);
             txtAula = itemView.findViewById(R.id.item_registrado_txtAula);
             txtFecha = itemView.findViewById(R.id.item_registrado_txtFecha);
+            txtEntrada = itemView.findViewById(R.id.item_registrado_txtEntrada);
+            txtSalida = itemView.findViewById(R.id.item_registrado_txtSalida);
         }
     }
 }

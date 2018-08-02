@@ -64,14 +64,14 @@ public class NubeFragment extends Fragment {
 
     public void cargaData(){
         registroAsistencias = new ArrayList<>();
-//        try {
-//            Data data = new Data(context);
-//            data.open();
-//            registroAsistencias = data.getAllRegistradosNube();
-//            txtNumero.setText("Total enviados: " + registroAsistencias.size());
-//            data.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Data data = new Data(context);
+            data.open();
+            registroAsistencias = data.getAllRegistradosNube();
+            txtNumero.setText("Total enviados: " + registroAsistencias.size());
+            data.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
