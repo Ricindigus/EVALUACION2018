@@ -92,7 +92,7 @@ public class ListadoFragment extends Fragment {
                     int yy = calendario.get(Calendar.YEAR);
                     int mm = calendario.get(Calendar.MONTH)+1;
                     int dd = calendario.get(Calendar.DAY_OF_MONTH);
-                    agregados = data.getAllEntradaSinEnviar(sede,dd,mm,yy);
+                    agregados = data.getAllSinEnviar(sede,dd,mm,yy);
                     data.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -101,46 +101,40 @@ public class ListadoFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     Toast.makeText(context, "Subiendo...", Toast.LENGTH_SHORT).show();
                     for (final RegistroAsistencia registroAsistencia : agregados){
-                        if (registroAsistencia.getSubidoEntrada() == 0){
-                            registroAsistencia.setSubidoEntrada(1);
-                            if(registroAsistencia.getSubidoSalida() == 0)registroAsistencia.setSubidoSalida(1);
-                            String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
-                            final String c = registroAsistencia.getCodigo();
-                            db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
-                                            if(!b){
-                                                Toast.makeText(context, agregados.size() +" registros subidos", Toast.LENGTH_SHORT).show();
-                                                b =true;
-                                            }
-                                            try {
-                                                data = new Data(context);
-                                                data.open();
-                                                ContentValues contentValues = new ContentValues();
-                                                contentValues.put(SQLConstantes.registro_subido_entrada,1);
-                                                contentValues.put(SQLConstantes.registro_subido_entrada,1);
-                                                data.actualizarRegistro(c,contentValues);
-                                                cargaData();
-                                                registradoAdapter.notifyDataSetChanged();
-                                                data.close();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+                        if (registroAsistencia.getSubidoEntrada() == 0)registroAsistencia.setSubidoEntrada(1);
+                        if (registroAsistencia.getSubidoSalida() == 0)registroAsistencia.setSubidoSalida(1);
+                        String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
+                        final String c = registroAsistencia.getCodigo();
+                        db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
+                                        if(!b){
+                                            Toast.makeText(context, agregados.size() +" registros subidos", Toast.LENGTH_SHORT).show();
+                                            b =true;
                                         }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w("FIRESTORE", "Error writing document", e);
+                                        try {
+                                            data = new Data(context);
+                                            data.open();
+                                            ContentValues contentValues = new ContentValues();
+                                            contentValues.put(SQLConstantes.registro_subido_entrada,1);
+                                            contentValues.put(SQLConstantes.registro_subido_salida,1);
+                                            data.actualizarRegistro(c,contentValues);
+                                            cargaData();
+                                            registradoAdapter.notifyDataSetChanged();
+                                            data.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
                                         }
-                                    });
-                        }
-
-
-
-
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("FIRESTORE", "Error writing document", e);
+                                    }
+                                });
                     }
                 }else{
                     Toast.makeText(context, "No hay registros nuevos para subir", Toast.LENGTH_SHORT).show();

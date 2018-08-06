@@ -283,7 +283,7 @@ public class Data {
         return registroAsistencias;
     }
 
-    public ArrayList<RegistroAsistencia> getAllEntradaSinEnviar(String sede, int dia, int mes, int anio){
+    public ArrayList<RegistroAsistencia> getAllSinEnviar(String sede, int dia, int mes, int anio){
         ArrayList<RegistroAsistencia> registroAsistencias = new ArrayList<>();
         String[] whereArgs = new String[]{sede,Integer.toString(dia),Integer.toString(mes),Integer.toString(anio)};
         Cursor cursor = null;
