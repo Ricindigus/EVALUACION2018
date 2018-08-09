@@ -2,12 +2,14 @@ package com.example.dmorales.evaluacion2018.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +17,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dmorales.evaluacion2018.NumericKeyBoardTransformationMethod;
 import com.example.dmorales.evaluacion2018.R;
 import com.example.dmorales.evaluacion2018.modelo.Data;
+import com.example.dmorales.evaluacion2018.modelo.DocumentoAsistencia;
 import com.example.dmorales.evaluacion2018.modelo.RegistroAsistencia;
 import com.example.dmorales.evaluacion2018.modelo.Nacional;
+import com.example.dmorales.evaluacion2018.modelo.SQLConstantes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -51,6 +63,7 @@ public class EntradaFragment extends Fragment {
 
     String sede;
     Context context;
+    Data data;
 
 
 
@@ -137,7 +150,7 @@ public class EntradaFragment extends Fragment {
     public boolean buscarDNI(String dni){
         boolean encontrado = false;
         try {
-            Data data = new Data(context);
+            data = new Data(context);
             data.open();
             Nacional nacional = data.getNacional(dni);
             data.close();
@@ -169,10 +182,76 @@ public class EntradaFragment extends Fragment {
                         int dd = calendario.get(Calendar.DAY_OF_MONTH);
                         int hora = calendario.get(Calendar.HOUR_OF_DAY);
                         int minuto = calendario.get(Calendar.MINUTE);
-
-                        RegistroAsistencia registroAsistencia1 = new RegistroAsistencia(dni,dni,nacional.getApepat(), nacional.getSede(), nacional.getAula(),dd,
+                        final RegistroAsistencia registroAsistencia1 = new RegistroAsistencia(dni,dni,nacional.getApepat(), nacional.getSede(), nacional.getAula(),dd,
                                 mm,yy,hora,minuto,0,0,0,-1);
                         data.insertarRegistro(registroAsistencia1);
+                        final String fecha = checkDigito(registroAsistencia1.getDia()) + "-" + checkDigito(registroAsistencia1.getMes()) + "-" + registroAsistencia1.getAnio();
+                        final String c = registroAsistencia1.getCodigo();
+                        registroAsistencia1.setSubidoEntrada(1);
+                        //------------------------tipo 1--------------------------------------------------------------
+//                        DocumentoAsistencia da = new DocumentoAsistencia(getResources().getString(R.string.id_documento));
+//                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+//                        db.collection(getResources().getString(R.string.nombre_coleccion)).document(getResources().getString(R.string.id_documento))
+//                                .set(da).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                    @Override
+//                                    public void onSuccess(Void aVoid) {
+//                                        Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
+//                                        FirebaseFirestore.getInstance().collection(getResources().getString(R.string.nombre_coleccion)).document(getResources().getString(R.string.id_documento)).collection(fecha).document(registroAsistencia1.getCodigo()).set(registroAsistencia1)
+//                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                    @Override
+//                                                    public void onSuccess(Void aVoid) {
+//                                                        Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
+//                                                        try {
+//                                                            Data data1 = new Data(context);
+//                                                            data1.open();
+//                                                            ContentValues contentValues = new ContentValues();
+//                                                            contentValues.put(SQLConstantes.registro_subido_entrada,1);
+//                                                            data1.actualizarRegistro(c,contentValues);
+//                                                            data1.close();
+//                                                        } catch (IOException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//                                                    }
+//                                                })
+//                                                .addOnFailureListener(new OnFailureListener() {
+//                                                    @Override
+//                                                    public void onFailure(@NonNull Exception e) {
+//                                                        Log.w("FIRESTORE", "Error writing document", e);
+//                                                    }
+//                                                });
+//                                    }
+//                                })
+//                                .addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception e) {
+//                                        Log.w("FIRESTORE", "Error writing document", e);
+//                                    }
+//                                });
+                        //------------------------tipo 2--------------------------------------------------------------
+                        FirebaseFirestore.getInstance().collection(getResources().getString(R.string.nombre_coleccion)).document(getResources().getString(R.string.id_documento))
+                                .collection(fecha).document(registroAsistencia1.getCodigo()).set(registroAsistencia1)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("FIRESTORE", "DocumentSnapshot successfully written!");
+                                        try {
+                                            Data data1 = new Data(context);
+                                            data1.open();
+                                            ContentValues contentValues = new ContentValues();
+                                            contentValues.put(SQLConstantes.registro_subido_entrada,1);
+                                            data1.actualizarRegistro(c,contentValues);
+                                            data1.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("FIRESTORE", "Error writing document", e);
+                                    }
+                                });
                     }
                     data.close();
                 }else{

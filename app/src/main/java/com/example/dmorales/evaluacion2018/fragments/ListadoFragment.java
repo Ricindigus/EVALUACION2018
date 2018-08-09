@@ -103,9 +103,9 @@ public class ListadoFragment extends Fragment {
                     for (final RegistroAsistencia registroAsistencia : agregados){
                         if (registroAsistencia.getSubidoEntrada() == 0)registroAsistencia.setSubidoEntrada(1);
                         if (registroAsistencia.getSubidoSalida() == 0)registroAsistencia.setSubidoSalida(1);
-                        String fecha = registroAsistencia.getDia() + "-" + registroAsistencia.getMes() + "-" + registroAsistencia.getAnio();
+                        String fecha = checkDigito(registroAsistencia.getDia()) + "-" + checkDigito(registroAsistencia.getMes()) + "-" + registroAsistencia.getAnio();
                         final String c = registroAsistencia.getCodigo();
-                        db.collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
+                        db.collection(getResources().getString(R.string.nombre_coleccion)).document(getResources().getString(R.string.id_documento)).collection(fecha).document(registroAsistencia.getCodigo()).set(registroAsistencia)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
