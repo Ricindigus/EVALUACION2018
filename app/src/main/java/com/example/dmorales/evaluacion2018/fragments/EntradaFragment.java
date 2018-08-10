@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,23 +130,40 @@ public class EntradaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        edtDni.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() == 8) clickBoton();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ocultarTeclado(edtDni);
-                btnBuscar.requestFocus();
-                String dni = edtDni.getText().toString();
-                if(!dni.equals("")){
-                    if(!buscarDNI(dni)) {
-                        cvRegistro.setVisibility(View.GONE);
-                        cvYaregistrado.setVisibility(View.GONE);
-                        cvError.setVisibility(View.GONE);
-                        cvNoregistrado.setVisibility(View.VISIBLE);
-                    }
-                }
-                edtDni.setText("");
+                clickBoton();
             }
         });
+    }
+
+    public void clickBoton(){
+        ocultarTeclado(edtDni);
+        btnBuscar.requestFocus();
+        String dni = edtDni.getText().toString();
+        if(!dni.equals("")){
+            if(!buscarDNI(dni)) {
+                cvRegistro.setVisibility(View.GONE);
+                cvYaregistrado.setVisibility(View.GONE);
+                cvError.setVisibility(View.GONE);
+                cvNoregistrado.setVisibility(View.VISIBLE);
+            }
+        }
+        edtDni.setText("");
     }
 
     public boolean buscarDNI(String dni){
